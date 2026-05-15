@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta - AlugaTech</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: linear-gradient(135deg, #2a7ae4 0%, #1e5bb8 100% ); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 600px; }
+        .btn-primary { background-color: #2a7ae4; border: none; padding: 12px; font-weight: bold; }
+        .privacy-box { background-color: #f8f9fa; border-radius: 8px; padding: 15px; font-size: 0.85rem; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="card p-4 my-4">
+        <h2 class="text-center mb-4 text-primary fw-bold"><i class="fas fa-user-plus me-2"></i>Criar Conta</h2>
+        
+        <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+        <form th:action="@{/cadastro}" th:object="${usuario}" method="post">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold small">Nome Completo</label>
+                    <input type="text" th:field="*{nome}" class="form-control" placeholder="Seu nome" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold small">E-mail</label>
+                    <input type="email" th:field="*{email}" class="form-control" placeholder="email@exemplo.com" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold small">Data de Nascimento</label>
+                    <input type="date" th:field="*{dataNascimento}" class="form-control" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold small">Telefone</label>
+                    <input type="text" th:field="*{telefone}" class="form-control" placeholder="(11) 99999-9999" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold small">CPF (Opcional)</label>
+                <input type="text" th:field="*{cpf}" class="form-control" placeholder="000.000.000-00">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold small">Endereço Completo</label>
+                <input type="text" th:field="*{endereco}" class="form-control" placeholder="Rua, número, bairro e cidade" required>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold small">Usuário (Login)</label>
+                    <input type="text" th:field="*{username}" class="form-control" required>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <label class="form-label fw-bold small">Senha</label>
+                    <input type="password" th:field="*{senha}" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="privacy-box mb-4">
+                <i class="fas fa-shield-alt text-success me-2"></i>
+                <strong>Proteção de Dados:</strong> Seus dados pessoais serão utilizados exclusivamente para a gestão dos aluguéis e segurança das transações. Seguimos as diretrizes da LGPD para garantir sua privacidade.
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-3">Finalizar Cadastro</button>
+            <div class="text-center">
+                <a href="/login" class="text-decoration-none small">Já tem conta? Faça login</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

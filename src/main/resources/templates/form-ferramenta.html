@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Ferramenta - AlugaTech</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100% );
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 550px;
+        }
+        .card-header {
+            background-color: #2a7ae4;
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 20px;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #2a7ae4;
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #1e5bb8;
+            transform: translateY(-2px);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+        .input-group-text {
+            background-color: #f8f9fa;
+            color: #2a7ae4;
+        }
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="brand-name mb-1"><i class="fas fa-tools me-2"></i>ALUGATECH</div>
+            <h5 class="mb-0 opacity-75">Gestão de Inventário</h5>
+        </div>
+        
+        <div class="card-body p-4">
+            <h4 class="text-center mb-4 fw-bold text-dark">Cadastrar Nova Ferramenta</h4>
+
+            <form th:action="@{/admin/ferramentas/salvar}" th:object="${ferramenta}" method="post">
+                
+                <!-- ID oculto para edição -->
+                <input type="hidden" th:field="*{id}">
+
+                <!-- Nome da Ferramenta -->
+                <div class="mb-3">
+                    <label class="form-label">Nome do Equipamento</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                        <input type="text" th:field="*{nome}" class="form-control" 
+                               placeholder="Ex: Furadeira de Impacto Bosch" required>
+                    </div>
+                </div>
+
+                <!-- Descrição -->
+                <div class="mb-3">
+                    <label class="form-label">Descrição Técnica</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                        <textarea th:field="*{descricao}" class="form-control" rows="2" 
+                                  placeholder="Detalhes como potência, voltagem e acessórios..." required></textarea>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Preço da Diária -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Preço Diária (R$)</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                            <input type="number" step="0.01" th:field="*{precoDiaria}" class="form-control" 
+                                   placeholder="0.00" required>
+                        </div>
+                    </div>
+
+<!-- Campo da Imagem Simplificado -->
+<div class="mb-3">
+    <label class="form-label">Nome do Arquivo da Imagem</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fas fa-image"></i></span>
+        <input type="text" th:field="*{imagemUrl}" class="form-control" 
+               placeholder="Ex: furadeira.jpg" required>
+    </div>
+    <div class="form-text text-primary fw-bold mt-2">
+        <i class="fas fa-exclamation-circle me-1"></i> 
+        Nota: Certifique-se de adicionar o arquivo da imagem na pasta <u>src/main/resources/static/img</u> do seu projeto no Windows.
+    </div>
+</div>
+
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary shadow-sm">
+                        <i class="fas fa-save me-2"></i>Salvar no Sistema
+                    </button>
+                    <a href="/catalogo" class="btn btn-link text-muted text-decoration-none small text-center">
+                        <i class="fas fa-arrow-left me-1"></i> Voltar ao Catálogo
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <div class="card-footer bg-white border-0 text-center pb-3">
+            <small class="text-muted">Painel Administrativo AlugaTech &copy; 2026</small>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
