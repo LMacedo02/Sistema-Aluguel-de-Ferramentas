@@ -16,7 +16,11 @@ public class FerramentaService {
         this.ferramentaRepository = ferramentaRepository;
     }
 
-    // Método que o erro de compilação estava pedindo:
+    // Método que estava faltando para o Carrinho:
+    public Optional<Ferramenta> buscarPorId(Long id) {
+        return ferramentaRepository.findById(id);
+    }
+
     public List<Ferramenta> listarAtivas() {
         return ferramentaRepository.findByAtivaTrue();
     }
@@ -30,10 +34,6 @@ public class FerramentaService {
         return ferramentaRepository.findAll();
     }
 
-    public Optional<Ferramenta> buscarPorId(Long id) {
-        return ferramentaRepository.findById(id);
-    }
-
     public void excluir(Long id) {
         ferramentaRepository.deleteById(id);
     }
@@ -41,7 +41,6 @@ public class FerramentaService {
     @PostConstruct
     public void criarFerramentasExemplo() {
         if (ferramentaRepository.count() == 0) {
-            // 1. Furadeira
             Ferramenta f1 = new Ferramenta();
             f1.setNome("Furadeira de Impacto");
             f1.setDescricao("Bosch Professional 500W com maleta");
@@ -49,7 +48,6 @@ public class FerramentaService {
             f1.setImagemUrl("/img/furadeira.jpg");
             f1.setAtiva(true);
 
-            // 2. Serra Circular
             Ferramenta f2 = new Ferramenta();
             f2.setNome("Serra Circular");
             f2.setDescricao("DeWalt 1800W para cortes precisos em madeira");
@@ -57,7 +55,6 @@ public class FerramentaService {
             f2.setImagemUrl("/img/serra.jpg");
             f2.setAtiva(true);
 
-            // 3. Lixadeira
             Ferramenta f3 = new Ferramenta();
             f3.setNome("Lixadeira Orbital");
             f3.setDescricao("Makita ideal para acabamentos finos");
@@ -65,7 +62,6 @@ public class FerramentaService {
             f3.setImagemUrl("/img/lixadeira.jpg");
             f3.setAtiva(true);
 
-            // 4. Martelete
             Ferramenta f4 = new Ferramenta();
             f4.setNome("Martelete Perfurador");
             f4.setDescricao("Martelete SDS-Plus para concreto pesado");
@@ -77,8 +73,6 @@ public class FerramentaService {
             ferramentaRepository.save(f2);
             ferramentaRepository.save(f3);
             ferramentaRepository.save(f4);
-            
-            System.out.println(">>> 4 Ferramentas criadas com sucesso!");
         }
     }
 }

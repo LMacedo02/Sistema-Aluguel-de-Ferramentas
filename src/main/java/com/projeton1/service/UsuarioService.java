@@ -2,33 +2,35 @@ package com.projeton1.service;
 
 import com.projeton1.model.Usuario;
 import com.projeton1.repository.UsuarioRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
-    public void salvar(Usuario usuario) throws Exception {
-        // REGRA DE NEGÓCIO: Validar idade (+18 anos)
+    public Usuario salvar(Usuario usuario) {
+        // Lógica de validação de idade
         if (usuario.getDataNascimento() != null) {
             int idade = Period.between(usuario.getDataNascimento(), LocalDate.now()).getYears();
             if (idade < 18) {
-                throw new Exception("Você precisa ter pelo menos 18 anos para se cadastrar.");
+                throw new IllegalArgumentException("Você precisa ter pelo menos 18 anos para se cadastrar.");
             }
         }
-
-        // Criptografa a senha antes de salvar
-        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
-        usuarioRepository.save(usuario);
+        return usuarioRepository.save(usuario);
     }
+
+    public Optional<Usuario> findByUsername(String username) {
+        return usuarioRepository.findByUsername(username);
+    }
+
+    // Outros métodos do serviço, se houver
 }
