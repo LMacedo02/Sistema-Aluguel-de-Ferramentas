@@ -2,147 +2,80 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finalizar Aluguel - AlugaTech</title>
+    <title>Checkout - AlugaTech</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #f4f7f6; padding-top: 50px; }
-        .checkout-card { background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05 ); overflow: hidden; }
-        .tool-info { background-color: #2a7ae4; color: white; padding: 40px; }
-        .checkout-form { padding: 40px; }
-        .price-big { font-size: 2.5rem; font-weight: 800; color: #2a7ae4; }
-        .discount-badge { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 10px; border-radius: 8px; font-size: 0.9rem; }
-        .button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        body { background-color: #f8f9fa; }
+        .checkout-card { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1 ); }
+        .tool-img { max-height: 300px; object-fit: contain; border-radius: 15px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="row checkout-card mx-auto" style="max-width: 900px;">
-        <!-- Lado Esquerdo: Info da Ferramenta -->
-        <div class="col-md-5 tool-info d-flex flex-column justify-content-center text-center">
-            <img th:src="@{${ferramenta.imagemUrl}}" alt="Ferramenta" class="img-fluid rounded mb-4 shadow-sm" style="max-height: 200px; background: white; padding: 10px;">
-            <h3 class="fw-bold" th:text="${ferramenta.nome}"></h3>
-            <p class="opacity-75" th:text="${ferramenta.descricao}"></p>
-            <hr class="opacity-25">
-            <p class="mb-0">Preço da Diária</p>
-            <h2 class="fw-bold">R$ <span th:text="${ferramenta.precoDiaria}"></span></h2>
+<!-- NAVBAR INTELIGENTE -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top mb-5">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/home"><i class="fas fa-tools me-2"></i>ALUGATECH</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/catalogo">Catálogo</a></li>
+                <li class="nav-item" th:if="${#authentication.name == 'anonymousUser'}">
+                    <a class="btn btn-outline-light btn-sm ms-2" href="/login"><i class="fas fa-user-circle me-1"></i> Entrar</a>
+                </li>
+                <li class="nav-item dropdown" th:unless="${#authentication.name == 'anonymousUser'}">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle"></i> <span th:text="${#authentication.name}"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/meus-alugueis">Meus Aluguéis</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><form th:action="@{/logout}" method="post"><button class="dropdown-item" type="submit">Sair</button></form></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
+    </div>
+</nav>
 
-        <!-- Lado Direito: Formulário -->
-        <div class="col-md-7 checkout-form">
-            <h4 class="fw-bold mb-4">Configurar Locação</h4>
-            
-            <form id="formCheckout">
-                <input type="hidden" name="idFerramenta" th:value="${ferramenta.id}">
-                
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Quantos dias você precisa?</label>
-                    <div class="input-group input-group-lg">
-                        <span class="input-group-text bg-white"><i class="fas fa-calendar-alt text-primary"></i></span>
-                        <!-- CAIXA DE TEXTO SIMPLES -->
-                        <input type="number" id="inputDias" name="dias" class="form-control" min="1" max="90" value="1" required>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card checkout-card p-4">
+                <div class="row g-4">
+                    <div class="col-md-6 text-center">
+                        <img th:src="@{${ferramenta.imagemUrl}}" class="tool-img img-fluid shadow-sm" alt="Ferramenta">
                     </div>
-                    <div class="discount-badge mt-3">
-                        <i class="fas fa-percentage me-2"></i>
-                        <strong>Promoção:</strong> Aluguéis a partir de 5 dias ganham <strong>5% de desconto</strong> no valor final!
+                    <div class="col-md-6">
+                        <h2 class="fw-bold mb-3" th:text="${ferramenta.nome}"></h2>
+                        <p class="text-muted mb-4" th:text="${ferramenta.descricao}"></p>
+                        
+                        <!-- PREÇO COM 2 CASAS DECIMAIS -->
+                        <h4 class="text-primary fw-bold mb-4">
+                            R$ <span th:text="${#numbers.formatDecimal(ferramenta.precoDiaria, 1, 'POINT', 2, 'COMMA')}"></span> / dia
+                        </h4>
+
+                        <form th:action="@{/carrinho/adicionar}" method="post" class="bg-light p-4 rounded-4">
+                            <input type="hidden" name="idFerramenta" th:value="${ferramenta.id}">
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Por quantos dias deseja alugar?</label>
+                                <input type="number" name="dias" class="form-control form-control-lg" value="1" min="1" required>
+                                <small class="text-muted mt-2 d-block">* Aluguéis acima de 5 dias ganham 5% de desconto.</small>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" name="acao" value="carrinho" class="btn btn-outline-primary btn-lg fw-bold">Adicionar ao Carrinho</button>
+                                <button type="submit" name="acao" value="finalizar" class="btn btn-primary btn-lg fw-bold">Alugar Agora</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-
-                <div class="bg-light p-4 rounded-3 mb-4">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Subtotal:</span>
-                        <span id="txtSubtotal">R$ 0,00</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2 text-success fw-bold" id="divDesconto" style="display: none !important;">
-                        <span>Desconto (5%):</span>
-                        <span id="txtDesconto">- R$ 0,00</span>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="fw-bold">Valor Total:</span>
-                        <span class="price-big" id="txtTotal">R$ 0,00</span>
-                    </div>
-                </div>
-
-                <!-- DOIS BOTÕES LADO A LADO -->
-                <div class="button-group">
-                    <button type="button" class="btn btn-outline-primary btn-lg fw-bold py-3" onclick="adicionarAoCarrinho()">
-                        <i class="fas fa-cart-plus me-2"></i>Adicionar ao Carrinho
-                    </button>
-                    <button type="button" class="btn btn-primary btn-lg fw-bold py-3" onclick="finalizarCompra()">
-                        <i class="fas fa-check-circle me-2"></i>Finalizar Compra
-                    </button>
-                </div>
-                
-                <a href="/catalogo" class="btn btn-link w-100 text-muted mt-2">Cancelar</a>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
-<script th:inline="javascript">
-    const precoDiaria = /*[[${ferramenta.precoDiaria}]]*/ 0;
-    const inputDias = document.getElementById('inputDias');
-    const txtSubtotal = document.getElementById('txtSubtotal');
-    const txtDesconto = document.getElementById('txtDesconto');
-    const txtTotal = document.getElementById('txtTotal');
-    const divDesconto = document.getElementById('divDesconto');
-    const formCheckout = document.getElementById('formCheckout');
-
-    function calcular() {
-        let dias = parseInt(inputDias.value) || 0;
-        if (dias < 1) dias = 1;
-        
-        let subtotal = dias * precoDiaria;
-        let desconto = 0;
-
-        if (dias >= 5) {
-            desconto = subtotal * 0.05;
-            divDesconto.style.setProperty('display', 'flex', 'important');
-        } else {
-            divDesconto.style.setProperty('display', 'none', 'important');
-        }
-
-        let total = subtotal - desconto;
-
-        txtSubtotal.innerText = 'R$ ' + subtotal.toFixed(2);
-        txtDesconto.innerText = '- R$ ' + desconto.toFixed(2);
-        txtTotal.innerText = 'R$ ' + total.toFixed(2);
-    }
-
-    function adicionarAoCarrinho() {
-        // Cria um formulário temporário e envia com a ação "adicionar"
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/carrinho/adicionar';
-        form.innerHTML = `
-            <input type="hidden" name="idFerramenta" value="${formCheckout.elements['idFerramenta'].value}">
-            <input type="hidden" name="dias" value="${inputDias.value}">
-            <input type="hidden" name="acao" value="adicionar">
-        `;
-        document.body.appendChild(form);
-        form.submit();
-    }
-
-    function finalizarCompra() {
-        // Envia com a ação "finalizar"
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/carrinho/adicionar';
-        form.innerHTML = `
-            <input type="hidden" name="idFerramenta" value="${formCheckout.elements['idFerramenta'].value}">
-            <input type="hidden" name="dias" value="${inputDias.value}">
-            <input type="hidden" name="acao" value="finalizar">
-        `;
-        document.body.appendChild(form);
-        form.submit();
-    }
-
-    inputDias.addEventListener('input', calcular);
-    window.onload = calcular;
-</script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

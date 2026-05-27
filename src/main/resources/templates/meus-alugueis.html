@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Meus Aluguéis - AlugaTech</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/home"><i class="fas fa-tools me-2"></i>ALUGATECH</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/catalogo">Catálogo</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle fw-bold" href="#" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle"></i> <span th:text="${#authentication.name}"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item active" href="/meus-alugueis">Meus Aluguéis</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><form th:action="@{/logout}" method="post"><button class="dropdown-item text-danger" type="submit">Sair</button></form></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-4">
+    <h2 class="fw-bold mb-4"><i class="fas fa-history me-2"></i>Histórico de Aluguéis</h2>
+    
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Ferramenta</th>
+                        <th>Data</th>
+                        <th>Prazo</th>
+                        <th>Valor Pago</th>
+                        <th>Status</th>
+                        <th class="text-center">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="a : ${alugueis}">
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <img th:src="@{${a.ferramenta.imagemUrl}}" width="40" class="me-3 rounded">
+                                <span class="fw-bold" th:text="${a.ferramenta.nome}"></span>
+                            </div>
+                        </td>
+                        <td th:text="${#temporals.format(a.dataAluguel, 'dd/MM/yyyy' )}"></td>
+                        <td th:text="${a.dias + ' dias'}"></td>
+                        <td class="fw-bold text-primary">R$ <span th:text="${#numbers.formatDecimal(a.valorTotal, 1, 'POINT', 2, 'COMMA')}"></span></td>
+                        <td>
+                            <span th:class="${a.status == 'PENDENTE' ? 'badge bg-warning text-dark' : 'badge bg-success'}" 
+                                  th:text="${a.status}"></span>
+                        </td>
+                        <td class="text-center pe-4">
+                            <form th:if="${a.status == 'PENDENTE'}" th:action="@{/devolver/{id}(id=${a.id})}" method="post">
+                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">Devolver</button>
+                            </form>
+                            <span th:if="${a.status == 'FINALIZADO'}" class="text-muted small"><i class="fas fa-check-double me-1"></i> Entregue</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        <a href="/catalogo" class="btn btn-primary px-4 py-2 fw-bold">ALUGAR MAIS FERRAMENTAS</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

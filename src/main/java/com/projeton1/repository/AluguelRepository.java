@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AluguelRepository extends JpaRepository<Aluguel, Long> {
-    List<Aluguel> findByUsuario(Usuario usuario);
     long countByUsuarioAndStatus(Usuario usuario, String status);
+    
+    // O nome deve ser exatamente este:
+    List<Aluguel> findByUsuarioOrderByIdDesc(Usuario usuario);
 }

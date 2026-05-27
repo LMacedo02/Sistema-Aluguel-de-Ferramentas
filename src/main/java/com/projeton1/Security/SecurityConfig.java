@@ -13,27 +13,27 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http ) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(auth -> auth
                 // Liberamos o acesso às imagens (/img/** ) para elas não sumirem
                 .requestMatchers("/", "/home", "/login", "/cadastro", "/catalogo", "/h2-console/**", "/img/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
+                )
+                .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/home", true) // Alterado para ir para a HOME após o login
+                .defaultSuccessUrl("/catalogo", true) // O 'true' força ir para o catálogo
                 .permitAll()
-            )
-            .logout(logout -> logout
+                )
+                .logout(logout -> logout
                 .logoutSuccessUrl("/login")
-            )
-            .csrf(csrf -> csrf.disable())
-            .headers(headers -> headers.frameOptions(frame -> frame.disable()));
+                )
+                .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
-        return http.build( );
+        return http.build();
     }
 
     @Bean

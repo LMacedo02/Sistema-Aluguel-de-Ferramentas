@@ -1,28 +1,34 @@
 package com.projeton1.model;
 
-import java.io.Serializable;
-
-public class ItemCarrinho implements Serializable {
+public class ItemCarrinho {
     private Ferramenta ferramenta;
-    private Integer dias;
-    private Double subtotal;
+    private int dias;
 
-    public ItemCarrinho(Ferramenta ferramenta, Integer dias) {
+    public ItemCarrinho() {}
+
+    public ItemCarrinho(Ferramenta ferramenta, int dias) {
         this.ferramenta = ferramenta;
         this.dias = dias;
-        this.subtotal = calcularSubtotal();
     }
 
-    public Double calcularSubtotal() {
-        double valor = ferramenta.getPrecoDiaria() * dias;
-        if (dias >= 5) valor *= 0.95; // Regra dos 5% de desconto
-        return valor;
+    public double getSubtotalBruto() {
+        return ferramenta.getPrecoDiaria() * dias;
     }
 
-    // Getters e Setters
+    public double getValorDesconto() {
+        if (dias >= 5) {
+            return getSubtotalBruto() * 0.05;
+        }
+        return 0.0;
+    }
+
+    // ESTE É O MÉTODO QUE O CONTROLLER ESTÁ PROCURANDO:
+    public double getSubtotalLiquido() {
+        return getSubtotalBruto() - getValorDesconto();
+    }
+
     public Ferramenta getFerramenta() { return ferramenta; }
     public void setFerramenta(Ferramenta ferramenta) { this.ferramenta = ferramenta; }
-    public Integer getDias() { return dias; }
-    public void setDias(Integer dias) { this.dias = dias; this.subtotal = calcularSubtotal(); }
-    public Double getSubtotal() { return subtotal; }
+    public int getDias() { return dias; }
+    public void setDias(int dias) { this.dias = dias; }
 }

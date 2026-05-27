@@ -28,15 +28,16 @@ public class AluguelController {
         this.aluguelService = aluguelService;
     }
 
-    @GetMapping("/alugar/{idFerramenta}")
-    public String checkout(@PathVariable Long idFerramenta, Model model, RedirectAttributes ra) {
+    // AGORA A ROTA COMBINA COM O BOTÃO DO CATÁLOGO!
+    @GetMapping("/checkout/{id}")
+    public String checkout(@PathVariable Long id, Model model, RedirectAttributes ra) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
             ra.addFlashAttribute("erro", "Você precisa estar logado para alugar uma ferramenta.");
             return "redirect:/login";
         }
 
-        Optional<Ferramenta> ferramentaOpt = ferramentaService.buscarPorId(idFerramenta);
+        Optional<Ferramenta> ferramentaOpt = ferramentaService.buscarPorId(id);
         if (ferramentaOpt.isEmpty()) {
             ra.addFlashAttribute("erro", "Ferramenta não encontrada.");
             return "redirect:/catalogo";
@@ -61,12 +62,27 @@ public class AluguelController {
             try {
                 aluguelService.processarAluguel(aluguel);
                 model.addAttribute("aluguel", aluguel);
-                return "sucesso-aluguel"; // Nova tela de confirmação
+                return "redirect:/catalogo"; // Redireciona de volta com sucesso
             } catch (Exception e) {
                 ra.addFlashAttribute("erro", e.getMessage());
-                return "redirect:/alugar/" + idFerramenta;
+                return "redirect:/checkout/" + idFerramenta;
             }
         }
         return "redirect:/catalogo";
     }
+        @GetMapping("/meus-alugueis")
+    public String meusAlugueis(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        usuarioService.findByUsername(auth.getName()).ifPresent(u -> {
+            model.addAttribute("alugueis", aluguelService.listarPorUsuario(u));
+        });
+        return "meus-alugueis";
+    }
+
+    @PostMapping("/devolver/{id}")
+    public String devolver(@PathVariable Long id) {
+        aluguelService.finalizarAluguel(id);
+        return "redirect:/meus-alugueis?sucesso";
+    }
+
 }

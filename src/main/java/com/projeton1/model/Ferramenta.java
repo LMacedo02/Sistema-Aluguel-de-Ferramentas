@@ -16,53 +16,25 @@ public class Ferramenta {
     private String descricao;
     private Double precoDiaria;
     private String imagemUrl;
-    private boolean ativa;
+    private boolean ativa = true; // Valor padrão inicial
 
-    public Long getId() {
-        return id;
-    }
+    public Ferramenta() {}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public String getNome() {
-        return nome;
-    }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 
-    public String getDescricao() {
-        return descricao;
-    }
+    public Double getPrecoDiaria() { return precoDiaria; }
+    public void setPrecoDiaria(Double precoDiaria) { this.precoDiaria = precoDiaria; }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
+    public String getImagemUrl() { return imagemUrl; }
+    public void setImagemUrl(String imagemUrl) { this.imagemUrl = imagemUrl; }
 
-    public Double getPrecoDiaria() {
-        return precoDiaria;
-    }
-
-    public void setPrecoDiaria(Double precoDiaria) {
-        this.precoDiaria = precoDiaria;
-    }
-
-    public String getImagemUrl() {
-        return imagemUrl;
-    }
-
-    public void setImagemUrl(String imagemUrl) {
-        this.imagemUrl = imagemUrl;
-    }
-
-    public boolean isAtiva() {
-        return ativa;
-    }
-
-    public void setAtiva(boolean ativa) {
-        this.ativa = ativa;
-    }
+    public boolean isAtiva() { return ativa; }
+    public void setAtiva(boolean ativa) { this.ativa = ativa; }
 }

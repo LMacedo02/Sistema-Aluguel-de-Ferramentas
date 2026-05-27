@@ -4,6 +4,8 @@ import com.projeton1.model.Aluguel;
 import com.projeton1.model.Usuario;
 import com.projeton1.repository.AluguelRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 @Service
 public class AluguelService {
@@ -14,25 +16,24 @@ public class AluguelService {
         this.aluguelRepository = aluguelRepository;
     }
 
-public Aluguel processarAluguel(Aluguel aluguel) throws Exception {
-    Usuario user = aluguel.getUsuario();
-    
-    // Regra de limite de 3 aluguéis ativos
-    long ativos = aluguelRepository.countByUsuarioAndStatus(user, "PENDENTE");
-    if (ativos >= 3) {
-        throw new Exception("Você já possui 3 aluguéis pendentes. Finalize os anteriores primeiro.");
+    @Transactional
+    public Aluguel processarAluguel(Aluguel aluguel) throws Exception {
+        long ativos = aluguelRepository.countByUsuarioAndStatus(aluguel.getUsuario(), "PENDENTE");
+        if (ativos >= 3) {
+            throw new Exception("Você já possui 3 aluguéis pendentes. Devolva algum para continuar.");
+        }
+        return aluguelRepository.save(aluguel);
     }
 
-    // NOVA REGRA DE CÁLCULO COM DESCONTO DE 5%
-    double subtotal = aluguel.getDias() * aluguel.getFerramenta().getPrecoDiaria();
-    double valorFinal = subtotal;
-
-    if (aluguel.getDias() >= 5) {
-        valorFinal = subtotal * 0.95; // Aplica 5% de desconto
+    // MÉTODO CORRIGIDO PARA COMBINAR COM O REPOSITORY:
+    public List<Aluguel> listarPorUsuario(Usuario usuario) {
+        return aluguelRepository.findByUsuarioOrderByIdDesc(usuario);
     }
 
-    aluguel.setValorTotal(valorFinal);
-    return aluguelRepository.save(aluguel);
-}
-
+    public void finalizarAluguel(Long id) {
+        aluguelRepository.findById(id).ifPresent(a -> {
+            a.setStatus("FINALIZADO");
+            aluguelRepository.save(a);
+        });
+    }
 }
